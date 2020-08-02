@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Developing Data Products Week 4 Assignment pitch Presentation</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Developing Data Products Week 4 Assignment pitch Presentation">
+  <meta name="author" content="Yash Prakash">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  
+  <hgroup class="auto-fadein">
+    <h1>Developing Data Products Week 4 Assignment pitch Presentation</h1>
+    <h2>Interactive Plot Presentation</h2>
+    <p>Yash Prakash<br/></p>
+  </hgroup>
+  
+  <article></article>  
+  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  
+  <hgroup>
+    <h2>Overview: This Presentation describes the features of the  shiny app used to generate an interactive BoxPlot using the data from mtcars data.</h2>
+  </hgroup>
+  
+  <article data-timings="">
+    <p>Features:</p>
+
+<ol>
+<li>The User Interface consists of a title panel, sidebar layout and the main panel.</li>
+<li>The side bar layout consists of a radio button group which gives an option to the user to provide
+number of cylinders and describes the colour of the boxPlot which will be rendered based on the choice
+of the number of cylinders.</li>
+<li>The back end server component takes the input of the number of cylinders and subsets the mtcars data based on the cyl = <the input value></li>
+<li> boxPlot is filled with the appropriate colour based on the input provided.</li>
+</ol>
+
+  </article>
+  <!-- Presenter Notes -->
+  
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  
+  <hgroup>
+    <h2>Source Code. ui.r</h2>
+  </hgroup>
+  
+  <article data-timings="">
+    <pre><code class="r">library(shiny)
+# Define UI for application that draws a histogram
+shinyUI(fluidPage(
+    titlePanel(&quot;Dynamic Box Plot Generation using shiny UI&quot;),
+    sidebarLayout(
+        sidebarPanel(
+            radioButtons(&quot;cylinderNumbers&quot;, &quot;Cylinder Numbers:&quot;,
+                         c(&quot;4- Red&quot; = 4,
+                           &quot;6- Blue&quot; = 6,
+                           &quot;8- Green&quot; = 8))
+        ),
+        mainPanel(
+            plotOutput(&quot;boxPlot&quot;)
+        )
+    )))
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+  
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  
+  <hgroup>
+    <h2>Source Code. server.r</h2>
+  </hgroup>
+  
+  <article data-timings="">
+    <pre><code class="r">library(shiny)
+library(ggplot2)
+shinyServer(function(input, output) {
+    output$boxPlot &lt;- renderPlot({
+        boxColor &lt;- c(&quot;blue&quot;) 
+         cyl1 = input$cylinderNumbers
+         if (cyl1 == 4) {
+            boxColor &lt;- c(&quot;red&quot;)
+         }
+         if (cyl1 == 6) {
+           boxColor &lt;- c(&quot;blue&quot;)
+         }
+        if (cyl1 == 8) {
+            boxColor &lt;- c(&quot;green&quot;)
+         }
+         mtcars1 &lt;-subset(mtcars, cyl == cyl1)
+         ggplot(mtcars1, aes(x=as.factor(cyl), y=mpg)) + geom_boxplot(fill = boxColor)
+         p &lt;- ggplot(mtcars1, aes(x=as.factor(cyl), y=mpg)) + geom_boxplot(fill = boxColor)
+         p + ggtitle(&quot;BoxPlot MPG vs Cyl&quot;) + xlab(&quot;Number of Cylinders&quot;)+ylab(&quot;Miles Per Gallon&quot;)})})
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+  
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  
+  <hgroup>
+    <h2>mtcars sample data used for analysis</h2>
+  </hgroup>
+  
+  <article data-timings="">
+    <pre><code class="r">head(mtcars)
+</code></pre>
+
+<pre><code>##                    mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+## Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+## Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+## Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+## Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
+## Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
+</code></pre>
+
+<p>Following is the Link to the shiny.io where the application is deployed
+<a href="https://yash07.shinyapps.io/shiny/">https://yash07.shinyapps.io/shiny/</a></p>
+
+  </article>
+  <!-- Presenter Notes -->
+  
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Overview: This Presentation describes the features of the  shiny app used to generate an interactive BoxPlot using the data from mtcars data.'>
+         1
+      </a>
+    </li>
+    
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Source Code. ui.r'>
+         2
+      </a>
+    </li>
+    
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Source Code. server.r'>
+         3
+      </a>
+    </li>
+    
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='mtcars sample data used for analysis'>
+         4
+      </a>
+    </li>
+    
+    </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
